@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { api, ApiError, type Produto } from '../api/client';
 import { isIntegerUnit } from '../lib/movementRules';
 import { unitOptions } from '../lib/format';
+import { Field } from './Field';
 import { Modal } from './Modal';
 
 const productSchema = z.object({
@@ -37,19 +38,17 @@ export function ProductModal({ product, onClose, onSaved }: { product?: Produto;
     <Modal title={product ? 'Editar produto' : 'Cadastrar produto'} subtitle={product ? 'O saldo não muda ao editar. Use entradas e saídas para ajustar quantidades.' : 'O saldo começa em zero. Depois registre a primeira entrada.'} onClose={onClose}>
       <form className="form-stack" onSubmit={form.handleSubmit((v) => mutation.mutate(v))} noValidate>
         <div className="form-grid">
-          <label>Código<input placeholder="Ex.: 10025" {...form.register('codigo')} aria-invalid={!!errors.codigo} />{errors.codigo && <small className="field-error">{errors.codigo.message}</small>}</label>
-          <label>Nome do produto<input placeholder="Ex.: Caderno 10 matérias" {...form.register('nome')} aria-invalid={!!errors.nome} />{errors.nome && <small className="field-error">{errors.nome.message}</small>}</label>
+          <Field label="Código" error={errors.codigo?.message}>{(p) => <input {...p} placeholder="Ex.: 10025" {...form.register('codigo')} />}</Field>
+          <Field label="Nome do produto" error={errors.nome?.message}>{(p) => <input {...p} placeholder="Ex.: Caderno 10 matérias" {...form.register('nome')} />}</Field>
         </div>
-        <label><span>Descrição <span className="optional">opcional</span></span><input placeholder="Uma informação para identificar melhor" {...form.register('descricao')} />{errors.descricao && <small className="field-error">{errors.descricao.message}</small>}</label>
+        <Field label="Descrição" optional error={errors.descricao?.message}>{(p) => <input {...p} placeholder="Uma informação para identificar melhor" {...form.register('descricao')} />}</Field>
         <div className="form-grid">
-          <label>Unidade de medida
-            <select {...form.register('unidadeMedida')}>{unitOptions.map((u) => <option key={u}>{u}</option>)}</select>
-            <small className="hint">{isIntegerUnit(unit) ? 'Quantidades inteiras (ex.: 12).' : 'Aceita frações (ex.: 2,5).'}</small>
-          </label>
-          <label>Estoque mínimo
-            <input type="number" min="0" step="any" inputMode="decimal" {...form.register('estoqueMinimo')} aria-invalid={!!errors.estoqueMinimo} />
-            {errors.estoqueMinimo ? <small className="field-error">{errors.estoqueMinimo.message}</small> : <small className="hint">Avisamos quando o saldo chegar a esse valor. 0 desliga o aviso.</small>}
-          </label>
+          <Field label="Unidade de medida" hint={isIntegerUnit(unit) ? 'Quantidades inteiras (ex.: 12).' : 'Aceita frações (ex.: 2,5).'}>
+            {(p) => <select {...p} {...form.register('unidadeMedida')}>{unitOptions.map((u) => <option key={u}>{u}</option>)}</select>}
+          </Field>
+          <Field label="Estoque mínimo" error={errors.estoqueMinimo?.message} hint="Avisamos quando o saldo chegar a esse valor. 0 desliga o aviso.">
+            {(p) => <input {...p} type="number" min="0" step="any" inputMode="decimal" {...form.register('estoqueMinimo')} />}
+          </Field>
         </div>
         {mutation.isError && !duplicate && <p className="form-error" role="alert">{mutation.error.message}</p>}
         <div className="modal-actions">

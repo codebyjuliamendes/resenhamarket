@@ -14,8 +14,16 @@ import org.springframework.stereotype.Service;
 public class JwtService {
   private final SecretKey key;
   private final long expiration;
-  public JwtService(@Value("${app.jwt.secret}") String secret, @Value("${app.jwt.expiration}") long expiration) {
+  public JwtService(@Value("${app.jwt.secret}") String secret, @Value("${app.jwt.expiration}") long expiration, @Value("${app.seed.enabled:false}") boolean demo) {
+    validarSegredo(secret, demo);
     this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)); this.expiration = expiration;
+  }
+  /** Os segredos de exemplo do repositório começam com "dev-only" ou "replace-with"; só valem na demonstração. */
+  static void validarSegredo(String secret, boolean demo) {
+    if (secret == null || secret.getBytes(StandardCharsets.UTF_8).length < 32)
+      throw new IllegalStateException("APP_JWT_SECRET precisa ter pelo menos 32 bytes.");
+    if (!demo && (secret.startsWith("dev-only") || secret.startsWith("replace-with")))
+      throw new IllegalStateException("APP_JWT_SECRET está com o valor de exemplo. Defina um segredo próprio antes de desligar a demonstração.");
   }
   public String create(Usuario user) {
     Instant now=Instant.now();

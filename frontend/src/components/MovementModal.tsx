@@ -7,6 +7,7 @@ import { ArrowDownLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { api, type Movimento, type Produto, type TipoMovimento } from '../api/client';
 import { calculateNextBalance, isIntegerUnit, quantityError } from '../lib/movementRules';
 import { formatQty, motives } from '../lib/format';
+import { Field } from './Field';
 import { Modal } from './Modal';
 
 const movementSchema = z.object({
@@ -54,18 +55,19 @@ export function MovementModal({ product, type, onClose, onSaved }: { product: Pr
         <button type="button" role="radio" aria-checked={!isEntry} className={!isEntry ? 'exit-active' : ''} onClick={() => switchType('SAIDA')}><ArrowUpRight size={16} /> Saída</button>
       </div>
       <form className="form-stack" onSubmit={form.handleSubmit((v) => mutation.mutate(v))} noValidate>
-        <label>Quantidade ({product.unidadeMedida})
-          <span className="qty-row">
-            <input data-autofocus type="number" min="0.001" step="any" inputMode={isIntegerUnit(product.unidadeMedida) ? 'numeric' : 'decimal'} placeholder={isIntegerUnit(product.unidadeMedida) ? 'Ex.: 12' : 'Ex.: 2,5'} {...form.register('quantidade')} aria-invalid={!!(qtyProblem || form.formState.errors.quantidade)} />
-            {[1, 5, 10].map((n) => (
-              <button key={n} type="button" onClick={() => addQuantity(n)} aria-label={`Mais ${n}`}>+{n}</button>
-            ))}
-          </span>
-          {qtyProblem ? <small className="field-error">{qtyProblem}</small> : form.formState.errors.quantidade && <small className="field-error">{form.formState.errors.quantidade.message}</small>}
-        </label>
+        <Field label={`Quantidade (${product.unidadeMedida})`} error={qtyProblem ?? form.formState.errors.quantidade?.message}>
+          {(p) => (
+            <span className="qty-row">
+              <input {...p} data-autofocus type="number" min="0.001" step="any" inputMode={isIntegerUnit(product.unidadeMedida) ? 'numeric' : 'decimal'} placeholder={isIntegerUnit(product.unidadeMedida) ? 'Ex.: 12' : 'Ex.: 2,5'} {...form.register('quantidade')} />
+              {[1, 5, 10].map((n) => (
+                <button key={n} type="button" onClick={() => addQuantity(n)} aria-label={`Mais ${n}`}>+{n}</button>
+              ))}
+            </span>
+          )}
+        </Field>
         <div className="form-grid">
-          <label>Motivo<select {...form.register('motivo')}>{motives[activeType].map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-          <label><span>Observação <span className="optional">opcional</span></span><input placeholder="Ex.: reposição semanal" maxLength={255} {...form.register('observacao')} /></label>
+          <Field label="Motivo">{(p) => <select {...p} {...form.register('motivo')}>{motives[activeType].map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select>}</Field>
+          <Field label="Observação" optional error={form.formState.errors.observacao?.message}>{(p) => <input {...p} placeholder="Ex.: reposição semanal" maxLength={255} {...form.register('observacao')} />}</Field>
         </div>
         <div className={`balance-preview ${outOfStock ? 'balance-error' : ''}`} aria-live="polite">
           <span>Saldo depois da movimentação</span>
