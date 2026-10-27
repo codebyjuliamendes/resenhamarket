@@ -39,6 +39,12 @@
 
 - `APP_SEED_CENARIO` escolhe varejo, farmacia, alimenticio ou todos; `APP_SEED_RESET=true` apaga produtos e movimentações e recarrega. Ver `docs/CENARIOS.md`.
 
+## Implantação em nuvem (27/10/2026)
+
+- Frontend na Vercel; `/api/*` repassado para a API Spring Boot no Render (Docker), com PostgreSQL no Neon. Passo a passo em `docs/DEPLOY.md`.
+- A API simulada em TypeScript (`api/server.ts`) foi removida: guardava dados em memória por instância, aceitava qualquer token e não aplicava as regras do backend.
+- `server.port` aceita `PORT` (Render); CORS aceita padrões de origem para as prévias da Vercel.
+
 ## Próximos incrementos
 
 - Refinamento de Docker health/recovery e tratamento de erros de banco.

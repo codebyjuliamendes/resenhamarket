@@ -45,8 +45,9 @@ public class SecurityConfig {
     res.setStatus(status.value());res.setContentType(MediaType.APPLICATION_JSON_VALUE);res.setCharacterEncoding("UTF-8");
     mapper.writeValue(res.getOutputStream(),new ApiError(status.value(),code,message,List.of(),Instant.now()));
   }
+  // Aceita padrões (ex.: https://resenhamarket-*.vercel.app) para as prévias de deploy da Vercel.
   @Bean CorsConfigurationSource corsConfigurationSource(@Value("${app.cors.origins}") String origins){
-    CorsConfiguration c=new CorsConfiguration();c.setAllowedOrigins(Arrays.stream(origins.split(",")).map(String::trim).toList());
+    CorsConfiguration c=new CorsConfiguration();c.setAllowedOriginPatterns(Arrays.stream(origins.split(",")).map(String::trim).filter(s->!s.isEmpty()).toList());
     c.setAllowedMethods(List.of("GET","POST","PUT","PATCH","OPTIONS"));c.setAllowedHeaders(List.of("Authorization","Content-Type"));c.setExposedHeaders(List.of("Location"));
     UrlBasedCorsConfigurationSource source=new UrlBasedCorsConfigurationSource();source.registerCorsConfiguration("/**",c);return source;
   }
