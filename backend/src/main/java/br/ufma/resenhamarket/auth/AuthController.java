@@ -18,14 +18,17 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController @RequestMapping("/api/v1/auth")
 public class AuthController {
-  private final UsuarioRepository users; private final PasswordEncoder passwords; private final JwtService jwt; private final LoginAttemptLimiter limiter; private final UsuarioService usuarios;
-  public AuthController(UsuarioRepository users,PasswordEncoder passwords,JwtService jwt,LoginAttemptLimiter limiter,UsuarioService usuarios){this.users=users;this.passwords=passwords;this.jwt=jwt;this.limiter=limiter;this.usuarios=usuarios;}
+  private final UsuarioRepository users; private final PasswordEncoder passwords; private final JwtService jwt; private final LoginAttemptLimiter limiter; private final UsuarioService usuarios; private final String dummyHash;
+  public AuthController(UsuarioRepository users,PasswordEncoder passwords,JwtService jwt,LoginAttemptLimiter limiter,UsuarioService usuarios){this.users=users;this.passwords=passwords;this.jwt=jwt;this.limiter=limiter;this.usuarios=usuarios;this.dummyHash=passwords.encode(java.util.UUID.randomUUID().toString());}
   public record LoginRequest(@Email @NotBlank String email,@NotBlank String senha){}
   public record UserDto(Long id,String nome,String email,String perfil){}
   @PostMapping("/login") public Map<String,Object> login(@Valid @RequestBody LoginRequest body,HttpServletRequest request){
     String chave=body.email().trim().toLowerCase()+"|"+request.getRemoteAddr();
     if(limiter.bloqueado(chave))throw new ApiException(HttpStatus.TOO_MANY_REQUESTS,"MUITAS_TENTATIVAS","Muitas tentativas sem sucesso. Aguarde "+limiter.minutosDeEspera()+" minutos e tente de novo.");
-    Usuario u=users.findByEmailIgnoreCase(body.email().trim()).filter(x->x.isAtivo()&&passwords.matches(body.senha(),x.getSenhaHash())).orElse(null);
+    // Sempre compara um hash (mesmo sem conta), para o tempo de resposta não revelar quais e-mails existem.
+    Usuario candidato=users.findByEmailIgnoreCase(body.email().trim()).orElse(null);
+    boolean senhaOk=passwords.matches(body.senha(),candidato==null?dummyHash:candidato.getSenhaHash());
+    Usuario u=candidato!=null&&candidato.isAtivo()&&senhaOk?candidato:null;
     if(u==null){limiter.registrarFalha(chave);throw new ApiException(HttpStatus.UNAUTHORIZED,"CREDENCIAIS_INVALIDAS","E-mail ou senha incorretos.");}
     limiter.limpar(chave);
     return Map.of("token",jwt.create(u),"expiraEm",jwt.expirationSeconds(),"usuario",dto(u));

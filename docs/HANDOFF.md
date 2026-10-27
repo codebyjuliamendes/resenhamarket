@@ -50,3 +50,10 @@
 - `GET /api/v1/produtos` ainda devolve lista simples.
 - O limite de tentativas de login fica em memória: vale por instância e zera ao reiniciar a API.
 - Segredo JWT e credenciais Compose são defaults de desenvolvimento. Para implantação, fornecer valores fortes por segredo de ambiente e desligar seeds.
+
+## Incremento de 27/10/2026 (preparação para produção)
+
+- Função serverless da Vercel (`api/server.ts`) reescrita em módulos (`api/_lib/`): autenticação real (tokens HS256, senhas com scrypt), perfis, validações e códigos de erro iguais aos do backend, quantidades em milésimos e testes Vitest na raiz.
+- Backend: quantidade com zeros à direita (`2.0000`) deixou de ser recusada; login sempre compara um hash; segredo JWT validado no boot; shutdown gracioso; testes de integração também rodam com `TEST_DATABASE_URL` sem Docker.
+- Web: Vite 7 / Vitest 4 (sem alertas do `npm audit`), ESLint, modo escuro automático.
+- Infra: CSP e headers de segurança (Vercel, nginx, preview), imagem web não-root com HEALTHCHECK, CI com job da função serverless e smoke test do Compose, Dependabot.
