@@ -27,6 +27,14 @@
 - Testes: 20 saídas simultâneas sobre saldo 10 (exatamente 10 aceitas), matriz de autorização, gestão de usuários, inativação de produto, limitador de login; no web, testes de interação do modal de movimentação, do login e do modal genérico.
 - Verificado localmente com PostgreSQL 16: `mvn verify` (testes de integração executados contra banco real), `npm run lint`, `npm run test` (10 testes), `npm run build` e roteiro ponta a ponta no navegador (Playwright) em desktop e 390 px.
 
+## Redesign visual (27/10/2026)
+
+- Barra lateral escura com seções Operação/Administração no desktop; cabeçalho e navegação inferior no celular.
+- Estoque com abas Todos / Abaixo do mínimo / Sem estoque / Inativos (com contadores), barra de nível em relação ao mínimo e selo de situação.
+- Página do produto com cartões de saldo (âmbar abaixo do mínimo, mostrando quanto falta) e histórico em linha do tempo.
+- Modal de movimentação com atalhos +1/+5/+10 e botão que mostra a quantidade; login em duas colunas.
+- Proposta de referência no canvas de design publicado nesta sessão.
+
 ## Próximos incrementos
 
 - Seleção/reset explícito dos seeds, refinamento de Docker health/recovery e tratamento de erros de banco.

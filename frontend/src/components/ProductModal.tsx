@@ -40,7 +40,7 @@ export function ProductModal({ product, onClose, onSaved }: { product?: Produto;
           <label>Código<input placeholder="Ex.: 10025" {...form.register('codigo')} aria-invalid={!!errors.codigo} />{errors.codigo && <small className="field-error">{errors.codigo.message}</small>}</label>
           <label>Nome do produto<input placeholder="Ex.: Caderno 10 matérias" {...form.register('nome')} aria-invalid={!!errors.nome} />{errors.nome && <small className="field-error">{errors.nome.message}</small>}</label>
         </div>
-        <label>Descrição <span className="optional">opcional</span><input placeholder="Uma informação para identificar melhor" {...form.register('descricao')} />{errors.descricao && <small className="field-error">{errors.descricao.message}</small>}</label>
+        <label><span>Descrição <span className="optional">opcional</span></span><input placeholder="Uma informação para identificar melhor" {...form.register('descricao')} />{errors.descricao && <small className="field-error">{errors.descricao.message}</small>}</label>
         <div className="form-grid">
           <label>Unidade de medida
             <select {...form.register('unidadeMedida')}>{unitOptions.map((u) => <option key={u}>{u}</option>)}</select>

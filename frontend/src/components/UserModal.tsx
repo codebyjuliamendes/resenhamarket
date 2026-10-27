@@ -41,7 +41,7 @@ export function UserModal({ user, isSelf, onClose, onSaved }: { user?: UsuarioAd
             )}
             <small className="hint">{isSelf ? 'Você não pode mudar o seu próprio perfil.' : 'Administradores cadastram produtos e gerenciam usuários.'}</small>
           </label>
-          <label>{user ? 'Nova senha' : 'Senha inicial'} {user && <span className="optional">opcional</span>}
+          <label><span>{user ? 'Nova senha' : 'Senha inicial'} {user && <span className="optional">opcional</span>}</span>
             <input type="password" autoComplete="new-password" {...form.register('senha')} aria-invalid={!!errors.senha} />
             {errors.senha && <small className="field-error">{errors.senha.message}</small>}
           </label>

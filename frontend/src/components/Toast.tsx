@@ -15,7 +15,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <Context.Provider value={notify}>
       {children}
       <div className="toast-region" role="status" aria-live="polite">
-        {text && <div className="toast"><Check size={16} />{text}</div>}
+        {text && <div className="toast"><Check size={16} aria-hidden />{text}</div>}
       </div>
     </Context.Provider>
   );
