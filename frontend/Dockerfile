@@ -5,6 +5,8 @@ RUN npm ci
 COPY . .
 ARG VITE_API_URL=
 ENV VITE_API_URL=$VITE_API_URL
+ARG VITE_SHOW_DEMO=true
+ENV VITE_SHOW_DEMO=$VITE_SHOW_DEMO
 RUN npm run build
 FROM nginx:1.27-alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf

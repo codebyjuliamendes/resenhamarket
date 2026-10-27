@@ -14,6 +14,9 @@ public class Usuario {
   @Column(name="criado_em",nullable=false,updatable=false) private Instant criadoEm;
   @Column(name="atualizado_em",nullable=false) private Instant atualizadoEm;
   protected Usuario(){}
-  public Long getId(){return id;} public String getNome(){return nome;} public String getEmail(){return email;} public String getSenhaHash(){return senhaHash;} public Perfil getPerfil(){return perfil;} public boolean isAtivo(){return ativo;}
-  public static Usuario criar(String nome,String email,String hash,Perfil perfil){var u=new Usuario();u.nome=nome;u.email=email;u.senhaHash=hash;u.perfil=perfil;u.ativo=true;u.criadoEm=Instant.now();u.atualizadoEm=u.criadoEm;return u;}
+  public Long getId(){return id;} public String getNome(){return nome;} public String getEmail(){return email;} public String getSenhaHash(){return senhaHash;} public Perfil getPerfil(){return perfil;} public boolean isAtivo(){return ativo;} public Instant getCriadoEm(){return criadoEm;} public Instant getAtualizadoEm(){return atualizadoEm;}
+  public static Usuario criar(String nome,String email,String hash,Perfil perfil){var u=new Usuario();u.nome=nome.trim();u.email=email.trim().toLowerCase();u.senhaHash=hash;u.perfil=perfil;u.ativo=true;u.criadoEm=Instant.now();u.atualizadoEm=u.criadoEm;return u;}
+  public void atualizar(String nome,String email,Perfil perfil){this.nome=nome.trim();this.email=email.trim().toLowerCase();this.perfil=perfil;this.atualizadoEm=Instant.now();}
+  public void alterarSenha(String hash){this.senhaHash=hash;this.atualizadoEm=Instant.now();}
+  public void inativar(){ativo=false;atualizadoEm=Instant.now();} public void reativar(){ativo=true;atualizadoEm=Instant.now();}
 }

@@ -19,6 +19,7 @@ spring:
     time-zone: UTC
 server:
   port: ${SERVER_PORT:8080}
+  forward-headers-strategy: native
   error:
     include-message: never
 management:
@@ -36,5 +37,8 @@ app:
     expiration: 28800000
   cors:
     origins: ${APP_CORS_ORIGINS:http://localhost:5173}
+  login:
+    max-falhas: ${APP_LOGIN_MAX_FALHAS:5}
+    janela-minutos: ${APP_LOGIN_JANELA_MINUTOS:15}
   seed:
     enabled: ${APP_SEED_ENABLED:false}

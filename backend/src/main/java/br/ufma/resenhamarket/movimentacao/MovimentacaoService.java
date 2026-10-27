@@ -8,7 +8,7 @@ import br.ufma.resenhamarket.usuario.UsuarioRepository;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.List;
+import br.ufma.resenhamarket.shared.PageDto;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -33,7 +33,11 @@ public class MovimentacaoService {
     Usuario u=usuarios.findById(usuarioId).orElseThrow(()->new ApiException(HttpStatus.UNAUTHORIZED,"NAO_AUTENTICADO","Faça login novamente."));
     p.aplicarSaldo(saldo);return dto(movimentos.save(Movimentacao.criar(p,in.tipo(),in.quantidade(),saldo,in.motivo(),blankToNull(in.observacao()),u)));
   }
-  public List<MovimentoDto> listar(Long produtoId,TipoMovimentacao tipo,Instant de,Instant ate,Integer page,Integer size){int safePage=Math.max(0,page==null?0:page),safeSize=Math.min(100,Math.max(1,size==null?30:size));return movimentos.filtrar(produtoId,tipo,de,ate,PageRequest.of(safePage,safeSize)).stream().map(this::dto).toList();}
+  public PageDto<MovimentoDto> listar(Long produtoId,TipoMovimentacao tipo,Instant de,Instant ate,Integer page,Integer size){
+    if(de!=null&&ate!=null&&!de.isBefore(ate))throw new ApiException(HttpStatus.BAD_REQUEST,"PERIODO_INVALIDO","A data inicial precisa ser anterior à data final.");
+    int safePage=Math.max(0,page==null?0:page),safeSize=Math.min(100,Math.max(1,size==null?30:size));
+    return PageDto.of(movimentos.filtrar(produtoId,tipo,de,ate,PageRequest.of(safePage,safeSize)),this::dto);
+  }
   public SaldoDto conciliar(Long id){var p=produtos.findById(id).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"PRODUTO_NAO_ENCONTRADO","Produto não encontrado."));var calculated=movimentos.saldoCalculado(id);return new SaldoDto(id,p.getSaldoAtual(),calculated,p.getSaldoAtual().compareTo(calculated)==0);}
   private MovimentoDto dto(Movimentacao m){return new MovimentoDto(m.getId(),m.getProduto().getId(),m.getProduto().getNome(),m.getProduto().getCodigo(),m.getTipo(),m.getQuantidade(),m.getSaldoApos(),m.getMotivo(),m.getObservacao(),m.getUsuario().getId(),m.getUsuario().getNome(),m.getCriadoEm());}
   private String blankToNull(String s){return s==null||s.isBlank()?null:s.trim();}

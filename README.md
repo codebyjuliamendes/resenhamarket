@@ -20,7 +20,7 @@ Contas da demonstração:
 | Administrador | `admin@resenha.dev` | `admin123` |
 | Operador | `operador@resenha.dev` | `operador123` |
 
-Não use essas credenciais em ambientes compartilhados ou de produção. Para zerar os dados locais: `docker compose down -v` (isso apaga o volume local do banco).
+Não use essas credenciais em ambientes compartilhados ou de produção. Para esconder o atalho de demonstração da tela de login, gere o frontend com `VITE_SHOW_DEMO=false`. Para zerar os dados locais: `docker compose down -v` (isso apaga o volume local do banco).
 
 ## Testes e desenvolvimento
 
@@ -39,12 +39,14 @@ Os testes de integração do backend usam Testcontainers e PostgreSQL 16. Java 2
 
 ## O que já funciona
 
-- Login stateless com JWT e perfis ADMINISTRADOR/OPERADOR.
-- Catálogo com consulta/busca, cadastro e edição administrativa, unidade genérica e inativação por API.
+- Login stateless com JWT, perfis ADMINISTRADOR/OPERADOR, logout automático quando a sessão expira, troca da própria senha e limite de tentativas de login.
+- Catálogo com busca, filtro de estoque baixo, cadastro/edição administrativa, unidade genérica e inativação/reativação pela tela.
+- Página de cada produto com saldo, mínimo e histórico próprio.
 - Entradas/saídas com validação de unidade, motivo e saldo não negativo; bloqueio pessimista por produto; livro de movimentações imutável.
-- Histórico filtrado por tipo e endpoint para conciliar saldo atual com o livro-razão.
-- Interface responsiva em português com busca, filtro de estoque baixo, prévia de saldo e feedback de sucesso/erro.
+- Histórico paginado com filtros por tipo, produto e período; endpoint para conciliar saldo atual com o livro-razão.
+- Gestão de usuários pelo administrador (criar, editar, inativar/reativar), sempre com pelo menos um administrador ativo.
+- Interface responsiva em português (tabelas viram cartões no celular), modais acessíveis por teclado e feedback de sucesso/erro.
 
 ## Escopo e limites
 
-Este MVP atende primeiro autenticação, catálogo e movimentações. A gestão visual de usuários, reativação/inativação no frontend, cenários de seed selecionáveis e a bateria concorrente completa ainda estão pendentes. Não implementa os itens explicitamente fora de escopo da especificação (fiscal, financeiro, múltiplas filiais, fornecedores, validade/lotes ou integrações externas). Veja [`docs/HANDOFF.md`](docs/HANDOFF.md) e [`docs/DECISOES.md`](docs/DECISOES.md).
+Este MVP cobre os requisitos R01 a R07 do TAP. Cenários de seed selecionáveis e a implantação em nuvem ainda estão pendentes. Não implementa os itens explicitamente fora de escopo da especificação (fiscal, relatórios gerenciais/dashboards, financeiro, múltiplas filiais, fornecedores, validade/lotes ou integrações externas). Veja [`docs/HANDOFF.md`](docs/HANDOFF.md) e [`docs/DECISOES.md`](docs/DECISOES.md).
