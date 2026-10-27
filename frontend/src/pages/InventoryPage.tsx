@@ -52,7 +52,14 @@ export function InventoryPage() {
     if (value) next.set(key, value); else next.delete(key);
     setParams(next, { replace: true });
   };
-  useEffect(() => { if ((params.get('busca') ?? '') !== term) setParam('busca', term || null); }, [term]);
+  useEffect(() => {
+    setParams((current) => {
+      if ((current.get('busca') ?? '') === term) return current;
+      const next = new URLSearchParams(current);
+      if (term) next.set('busca', term); else next.delete('busca');
+      return next;
+    }, { replace: true });
+  }, [term, setParams]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
