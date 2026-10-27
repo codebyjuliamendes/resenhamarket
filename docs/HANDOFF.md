@@ -39,10 +39,25 @@
 
 - `APP_SEED_CENARIO` escolhe varejo, farmacia, alimenticio ou todos; `APP_SEED_RESET=true` apaga produtos e movimentações e recarrega. Ver `docs/CENARIOS.md`.
 
+## Implantação em nuvem (27/10/2026)
+
+- Frontend na Vercel; `/api/*` repassado para a API Spring Boot no Render (Docker), com PostgreSQL no Neon. Passo a passo em `docs/DEPLOY.md`.
+- A API simulada em TypeScript (`api/server.ts`) foi removida: guardava dados em memória por instância, aceitava qualquer token e não aplicava as regras do backend.
+- `server.port` aceita `PORT` (Render); CORS aceita padrões de origem para as prévias da Vercel.
+
+## Qualidade e segurança (27/10/2026)
+
+- CI com três camadas: backend (unitários + integração + JaCoCo ≥ 90% linhas / 75% ramos), frontend (tipos, Vitest com cobertura ≥ 85% linhas, `npm audit`) e ponta a ponta (Playwright contra API e PostgreSQL reais, desktop e celular, axe WCAG 2.1 AA, CSP).
+- `RegrasDeNegocioTest`: 12 regras e respostas de erro da API. Cobertura medida: 94,9% das linhas e 82,1% dos ramos no backend; 91% das linhas no frontend.
+- Cabeçalhos de segurança (CSP restrita a `'self'`, `X-Frame-Options`, `nosniff`, `Referrer-Policy`) na Vercel, no nginx e no preview; fontes hospedadas no próprio app (sem Google Fonts).
+- A API não sobe com o segredo JWT de exemplo quando a demonstração está desligada.
+- Campos de formulário ligam erro e dica por `aria-describedby`; avatar e botão de senha corrigidos após auditoria do axe.
+- `docs/RASTREABILIDADE.md` (matriz do TAP) e `docs/validacao/MODELO_ATA.md` (ata das sessões).
+
 ## Próximos incrementos
 
 - Refinamento de Docker health/recovery e tratamento de erros de banco.
-- JaCoCo, métricas de cobertura, validação OS1 com roteiro observado e correção dos achados.
+- Validação OS1 com roteiro observado e correção dos achados.
 - Paginação também na listagem de produtos, se o catálogo crescer além de algumas centenas de itens.
 
 ## Limites e segurança

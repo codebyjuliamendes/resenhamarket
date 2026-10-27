@@ -1,5 +1,7 @@
 # Requisitos e rastreabilidade (primeiro corte)
 
+> A matriz pela numeração do TAP (R01–R09, OS1–OS4, E1–E7) está em [`RASTREABILIDADE.md`](RASTREABILIDADE.md).
+
 A especificação fornecida pelo usuário é tratada como requisito de produto. Este quadro registra o estado verificável da primeira fatia vertical.
 
 | Requisito | Estado | Evidência |

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-parent</artifactId><version>3.3.13</version><relativePath/></parent>
   <groupId>br.ufma</groupId><artifactId>resenhamarket-api</artifactId><version>0.1.0</version><name>ResenhaMarket API</name>
-  <properties><java.version>21</java.version><jjwt.version>0.12.6</jjwt.version></properties>
+  <properties><java.version>21</java.version><jjwt.version>0.12.6</jjwt.version><jacoco.skip.check>false</jacoco.skip.check><jacoco.min.linhas>0.90</jacoco.min.linhas><jacoco.min.ramos>0.75</jacoco.min.ramos></properties>
   <dependencies>
     <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency>
     <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-data-jpa</artifactId></dependency>
@@ -23,5 +23,24 @@
     <dependency><groupId>org.testcontainers</groupId><artifactId>junit-jupiter</artifactId><scope>test</scope></dependency>
     <dependency><groupId>org.testcontainers</groupId><artifactId>postgresql</artifactId><scope>test</scope></dependency>
   </dependencies>
-  <build><plugins><plugin><groupId>org.springframework.boot</groupId><artifactId>spring-boot-maven-plugin</artifactId></plugin></plugins></build>
+  <build><plugins>
+    <plugin><groupId>org.springframework.boot</groupId><artifactId>spring-boot-maven-plugin</artifactId></plugin>
+    <plugin>
+      <groupId>org.jacoco</groupId><artifactId>jacoco-maven-plugin</artifactId><version>0.8.13</version>
+      <executions>
+        <execution><id>prepare</id><goals><goal>prepare-agent</goal></goals></execution>
+        <execution><id>report</id><phase>verify</phase><goals><goal>report</goal></goals></execution>
+        <execution><id>check</id><phase>verify</phase><goals><goal>check</goal></goals>
+          <configuration>
+            <!-- Os testes de integração só rodam com Docker; sem ele (-Djacoco.skip.check=true) a cobertura não é cobrada. -->
+            <skip>${jacoco.skip.check}</skip>
+            <rules><rule><element>BUNDLE</element><limits>
+              <limit><counter>LINE</counter><value>COVEREDRATIO</value><minimum>${jacoco.min.linhas}</minimum></limit>
+              <limit><counter>BRANCH</counter><value>COVEREDRATIO</value><minimum>${jacoco.min.ramos}</minimum></limit>
+            </limits></rule></rules>
+          </configuration>
+        </execution>
+      </executions>
+    </plugin>
+  </plugins></build>
 </project>

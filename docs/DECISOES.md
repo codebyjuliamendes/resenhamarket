@@ -16,3 +16,5 @@ Este arquivo registra escolhas de implementação que complementam a especifica�
 | Um administrador não pode inativar a própria conta nem remover o próprio perfil, e sempre resta um administrador ativo. | Evita que o estabelecimento perca o acesso administrativo por engano. |
 | Limite de 5 falhas de login por e-mail+IP em 15 minutos, em memória (`APP_LOGIN_MAX_FALHAS`, `APP_LOGIN_JANELA_MINUTOS`). | Proteção simples contra força bruta, sem infraestrutura extra para o MVP de instância única. |
 | Filtros do estoque e do histórico ficam na URL. | O usuário pode voltar, recarregar ou compartilhar a mesma visão. |
+| Frontend na Vercel, API no Render (Docker) e banco no Neon, com a Vercel repassando `/api/*`. | A Vercel não executa Spring Boot; Render e Neon têm plano gratuito sem cartão (P05) e mantêm a stack do RE04. O repasse evita CORS e mudanças no frontend. |
+| A API simulada em TypeScript para a Vercel foi descartada. | Dados em memória por instância, sem autenticação real nem regras de saldo/perfil: demonstraria um sistema diferente do MVP. |

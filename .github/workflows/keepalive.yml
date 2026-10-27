@@ -1,0 +1,17 @@
+name: Manter API acordada
+# O plano gratuito do Render hiberna a API após 15 min sem uso. Durante o horário das sessões
+# de validação, um ping a cada 10 min evita a espera de ~1 min no primeiro acesso.
+# Defina a variável do repositório API_HEALTH_URL (ex.: https://resenhamarket-api.onrender.com/actuator/health).
+on:
+  schedule:
+    - cron: '*/10 11-23 * * 1-5'
+  workflow_dispatch:
+permissions: {}
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    if: ${{ vars.API_HEALTH_URL != '' }}
+    steps:
+      - run: curl -fsS --max-time 90 --retry 2 "$URL"
+        env:
+          URL: ${{ vars.API_HEALTH_URL }}

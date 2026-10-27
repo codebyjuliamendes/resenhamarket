@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { api, ApiError, type UsuarioAdmin } from '../api/client';
 import { roleLabel } from '../lib/format';
+import { Field } from './Field';
 import { Modal } from './Modal';
 
 const schema = (creating: boolean) => z.object({
@@ -29,22 +30,20 @@ export function UserModal({ user, isSelf, onClose, onSaved }: { user?: UsuarioAd
   return (
     <Modal title={user ? 'Editar usuário' : 'Novo usuário'} subtitle={user ? 'Deixe a senha em branco para manter a atual.' : 'Compartilhe a senha inicial com a pessoa. Ela pode trocá-la depois.'} onClose={onClose}>
       <form className="form-stack" onSubmit={form.handleSubmit((v) => mutation.mutate(v))} noValidate>
-        <label>Nome<input autoComplete="off" {...form.register('nome')} aria-invalid={!!errors.nome} />{errors.nome && <small className="field-error">{errors.nome.message}</small>}</label>
-        <label>E-mail<input type="email" autoComplete="off" {...form.register('email')} aria-invalid={!!errors.email} />{errors.email && <small className="field-error">{errors.email.message}</small>}</label>
+        <Field label="Nome" error={errors.nome?.message}>{(p) => <input {...p} autoComplete="off" {...form.register('nome')} />}</Field>
+        <Field label="E-mail" error={errors.email?.message}>{(p) => <input {...p} type="email" autoComplete="off" {...form.register('email')} />}</Field>
         <div className="form-grid">
-          <label>Perfil
-            {isSelf ? <input readOnly value={roleLabel(user?.perfil ?? 'OPERADOR')} /> : (
-              <select {...form.register('perfil')}>
+          <Field label="Perfil" hint={isSelf ? 'Você não pode mudar o seu próprio perfil.' : 'Administradores cadastram produtos e gerenciam usuários.'}>
+            {(p) => isSelf ? <input {...p} readOnly value={roleLabel(user?.perfil ?? 'OPERADOR')} /> : (
+              <select {...p} {...form.register('perfil')}>
                 <option value="OPERADOR">Operador</option>
                 <option value="ADMINISTRADOR">Administrador</option>
               </select>
             )}
-            <small className="hint">{isSelf ? 'Você não pode mudar o seu próprio perfil.' : 'Administradores cadastram produtos e gerenciam usuários.'}</small>
-          </label>
-          <label><span>{user ? 'Nova senha' : 'Senha inicial'} {user && <span className="optional">opcional</span>}</span>
-            <input type="password" autoComplete="new-password" {...form.register('senha')} aria-invalid={!!errors.senha} />
-            {errors.senha && <small className="field-error">{errors.senha.message}</small>}
-          </label>
+          </Field>
+          <Field label={user ? 'Nova senha' : 'Senha inicial'} optional={!!user} error={errors.senha?.message}>
+            {(p) => <input {...p} type="password" autoComplete="new-password" {...form.register('senha')} />}
+          </Field>
         </div>
         {mutation.isError && !duplicate && <p className="form-error" role="alert">{mutation.error.message}</p>}
         <div className="modal-actions">

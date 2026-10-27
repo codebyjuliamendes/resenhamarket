@@ -30,12 +30,13 @@ docker compose up --build
 
 API REST: `http://localhost:8080/api/v1`; documentação OpenAPI: `http://localhost:8080/swagger-ui.html`; saúde: `http://localhost:8080/actuator/health`.
 
-```bash
-cd frontend && npm ci && npm run lint && npm run test && npm run build
-cd backend && mvn verify
-```
+| Camada | Comando | O que cobre |
+|---|---|---|
+| Backend | `cd backend && mvn verify` | Testes unitários e de integração contra PostgreSQL 16 (Testcontainers, precisa de Docker) e cobertura JaCoCo com mínimo de 90% das linhas e 75% dos ramos. Sem Docker, use `-Djacoco.skip.check=true`. |
+| Frontend | `cd frontend && npm ci && npm run lint && npm run test:coverage && npm run build` | Tipos, testes de componentes e telas (Vitest + Testing Library) e cobertura mínima. |
+| Ponta a ponta | API rodando na porta 8080 com `APP_SEED_ENABLED=true`, depois `cd frontend && npx playwright install chromium && npm run test:e2e` | Fluxos no navegador (desktop e celular) contra a API e o banco reais, acessibilidade WCAG 2.1 AA (axe) e política de segurança (CSP). |
 
-Os testes de integração do backend usam Testcontainers e PostgreSQL 16. Java 21 e Maven são necessários para rodá-los no host; o Docker Compose já compila a API em Java 21.
+O CI (`.github/workflows/ci.yml`) roda as três camadas a cada push; os relatórios de cobertura ficam como artefatos da execução. A ligação de cada requisito do TAP com o código e os testes está em [`docs/RASTREABILIDADE.md`](docs/RASTREABILIDADE.md).
 
 ## O que já funciona
 
@@ -49,4 +50,4 @@ Os testes de integração do backend usam Testcontainers e PostgreSQL 16. Java 2
 
 ## Escopo e limites
 
-Este MVP cobre os requisitos R01 a R07 do TAP. A implantação em nuvem ainda está pendente. Não implementa os itens explicitamente fora de escopo da especificação (fiscal, relatórios gerenciais/dashboards, financeiro, múltiplas filiais, fornecedores, validade/lotes ou integrações externas). Veja [`docs/HANDOFF.md`](docs/HANDOFF.md) e [`docs/DECISOES.md`](docs/DECISOES.md).
+Este MVP cobre os requisitos R01 a R07 do TAP. A implantação em nuvem (Vercel + Render + Neon) está descrita em [`docs/DEPLOY.md`](docs/DEPLOY.md). Não implementa os itens explicitamente fora de escopo da especificação (fiscal, relatórios gerenciais/dashboards, financeiro, múltiplas filiais, fornecedores, validade/lotes ou integrações externas). Veja [`docs/HANDOFF.md`](docs/HANDOFF.md) e [`docs/DECISOES.md`](docs/DECISOES.md).

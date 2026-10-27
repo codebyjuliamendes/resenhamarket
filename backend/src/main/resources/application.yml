@@ -18,7 +18,7 @@ spring:
   jackson:
     time-zone: UTC
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${PORT:${SERVER_PORT:8080}}
   forward-headers-strategy: native
   error:
     include-message: never
@@ -36,7 +36,7 @@ app:
     secret: ${APP_JWT_SECRET:dev-only-secret-change-before-deploy-0123456789abcdef}
     expiration: 28800000
   cors:
-    origins: ${APP_CORS_ORIGINS:http://localhost:5173}
+    origins: ${APP_CORS_ORIGINS:http://localhost:5173,http://localhost:4173}
   login:
     max-falhas: ${APP_LOGIN_MAX_FALHAS:5}
     janela-minutos: ${APP_LOGIN_JANELA_MINUTOS:15}

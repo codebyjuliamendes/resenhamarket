@@ -53,12 +53,10 @@ export function LoginPage({ showDemo = import.meta.env.VITE_SHOW_DEMO !== 'false
           {notice && <p className="notice" role="status">{notice}</p>}
           <form onSubmit={submit} className="form-stack">
             <label>E-mail<input type="email" autoComplete="username" placeholder="voce@sualoja.com.br" value={email} onChange={(e) => setEmail(e.target.value)} required autoFocus /></label>
-            <label>Senha
-              <span className="password-field">
-                <input type={visible ? 'text' : 'password'} autoComplete="current-password" value={senha} onChange={(e) => setSenha(e.target.value)} required />
-                <button type="button" className="icon-button" onClick={() => setVisible(!visible)} aria-label={visible ? 'Ocultar senha' : 'Mostrar senha'}>{visible ? <EyeOff size={18} /> : <Eye size={18} />}</button>
-              </span>
-            </label>
+            <div className="password-field">
+              <label>Senha<input type={visible ? 'text' : 'password'} autoComplete="current-password" value={senha} onChange={(e) => setSenha(e.target.value)} required /></label>
+              <button type="button" className="icon-button" onClick={() => setVisible(!visible)} aria-label={visible ? 'Ocultar senha' : 'Mostrar senha'} aria-pressed={visible}>{visible ? <EyeOff size={18} /> : <Eye size={18} />}</button>
+            </div>
             {error && <p className="form-error" role="alert">{error}</p>}
             <button className="primary full" disabled={busy}>{busy ? 'Entrando…' : 'Entrar'}<ArrowRight size={17} aria-hidden /></button>
           </form>
