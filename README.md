@@ -11,7 +11,7 @@ cp .env.example .env
 docker compose up --build
 ```
 
-Abra [http://localhost:5173](http://localhost:5173). A primeira inicialização aplica as migrações do PostgreSQL e carrega dados de demonstração para três contextos de validação: varejo, farmácia e alimentício. O modelo e as regras continuam genéricos; não há campos de lote ou validade.
+Abra [http://localhost:5173](http://localhost:5173). A primeira inicialização aplica as migrações do PostgreSQL e carrega dados de demonstração. Por padrão entram os três cenários de validação juntos (varejo, farmácia e alimentício); para uma sessão de um ramo só, use `APP_SEED_CENARIO=varejo`, `farmacia` ou `alimenticio`. O modelo e as regras continuam genéricos; não há campos de lote ou validade. Detalhes em [`docs/CENARIOS.md`](docs/CENARIOS.md).
 
 Contas da demonstração:
 
@@ -49,4 +49,4 @@ Os testes de integração do backend usam Testcontainers e PostgreSQL 16. Java 2
 
 ## Escopo e limites
 
-Este MVP cobre os requisitos R01 a R07 do TAP. Cenários de seed selecionáveis e a implantação em nuvem ainda estão pendentes. Não implementa os itens explicitamente fora de escopo da especificação (fiscal, relatórios gerenciais/dashboards, financeiro, múltiplas filiais, fornecedores, validade/lotes ou integrações externas). Veja [`docs/HANDOFF.md`](docs/HANDOFF.md) e [`docs/DECISOES.md`](docs/DECISOES.md).
+Este MVP cobre os requisitos R01 a R07 do TAP. A implantação em nuvem ainda está pendente. Não implementa os itens explicitamente fora de escopo da especificação (fiscal, relatórios gerenciais/dashboards, financeiro, múltiplas filiais, fornecedores, validade/lotes ou integrações externas). Veja [`docs/HANDOFF.md`](docs/HANDOFF.md) e [`docs/DECISOES.md`](docs/DECISOES.md).

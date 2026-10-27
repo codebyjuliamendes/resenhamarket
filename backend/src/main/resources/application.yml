@@ -42,3 +42,5 @@ app:
     janela-minutos: ${APP_LOGIN_JANELA_MINUTOS:15}
   seed:
     enabled: ${APP_SEED_ENABLED:false}
+    cenario: ${APP_SEED_CENARIO:todos}
+    reset: ${APP_SEED_RESET:false}

@@ -7,7 +7,8 @@ Este arquivo registra escolhas de implementação que complementam a especifica�
 | Login foi implementado antes dos módulos de catálogo e movimentação. | Segue a seção 12 da especificação: todas as rotas de negócio já nascem protegidas. |
 | `GET /api/v1/movimentacoes` devolve página com metadados (tamanho máximo 100); `GET /api/v1/produtos` segue como lista simples. | O histórico cresce sem limite; o catálogo de um pequeno negócio cabe numa lista. |
 | O filtro de mínimo inclui saldo igual ao mínimo. | Mantém a regra RN09 exatamente: `saldoAtual <= estoqueMinimo`, com mínimo maior que zero. |
-| O seed de demonstração carrega os nove exemplos numa única inicialização, sem coluna ou regra por setor. | Permite validar unidade UN, CX, KG, L e PCT enquanto preserva a neutralidade do modelo. |
+| O seed de demonstração tem três cenários (varejo, farmácia, alimentício) de 8 produtos, escolhidos por `APP_SEED_CENARIO`; sem coluna ou regra por setor. | Uma sessão de validação por ramo (OS4) sem alterar código; o modelo continua neutro. |
+| O histórico da demonstração é gravado pelo próprio serviço de movimentação, com horário da carga. | O livro-razão segue imutável e consistente com o saldo; não há datas retroativas. |
 | O perfil de seed é controlado por `APP_SEED_ENABLED`; em Compose local o valor padrão é ligado. | Facilita a primeira experiência sem treinamento; o valor em implantação deve ser desligado após o setup. |
 | Códigos de produto são comparados em minúsculas e sem espaços externos por índice único funcional do PostgreSQL. | Evita duplicidade por diferenças triviais de capitalização/trim. |
 | Migrations Flyway são a fonte de schema; Hibernate roda com `ddl-auto=validate`. | Evita mudanças implícitas no schema durante a inicialização. |
