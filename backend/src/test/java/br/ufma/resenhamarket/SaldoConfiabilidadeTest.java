@@ -12,15 +12,12 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
+import org.junit.jupiter.api.condition.EnabledIf;
 
-@Testcontainers(disabledWithoutDocker=true)
+@EnabledIf("br.ufma.resenhamarket.TestDatabase#available")
 @SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT,properties="app.seed.enabled=true")
 class SaldoConfiabilidadeTest {
-  @Container static final PostgreSQLContainer<?> postgres=new PostgreSQLContainer<>("postgres:16-alpine").withDatabaseName("resenha_test").withUsername("resenha").withPassword("resenha_test");
-  @DynamicPropertySource static void database(DynamicPropertyRegistry r){r.add("spring.datasource.url",postgres::getJdbcUrl);r.add("spring.datasource.username",postgres::getUsername);r.add("spring.datasource.password",postgres::getPassword);}
+  @DynamicPropertySource static void database(DynamicPropertyRegistry r){TestDatabase.register(r,"saldo");}
   @LocalServerPort int port;@Autowired TestRestTemplate http;@Autowired ObjectMapper mapper;
   private String base(){return "http://localhost:"+port+"/api/v1";}
   private String token(String email,String senha){var response=http.postForEntity(base()+"/auth/login",Map.of("email",email,"senha",senha),JsonNode.class);assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);return response.getBody().path("token").asText();}
@@ -43,5 +40,14 @@ class SaldoConfiabilidadeTest {
     var invalid=http.exchange(base()+"/movimentacoes",HttpMethod.POST,new HttpEntity<>(Map.of("produtoId",id,"tipo","SAIDA","quantidade",100,"motivo","VENDA"),auth(operator)),JsonNode.class);
     assertThat(invalid.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
     var after=http.exchange(base()+"/produtos/"+id+"/saldo",HttpMethod.GET,new HttpEntity<>(auth(operator)),JsonNode.class);assertThat(after.getBody().path("saldoAtual").decimalValue()).isEqualByComparingTo("11.250");
+  }
+  @Test void zerosAEsquerdaDaEscalaNaoInvalidamAQuantidade()throws Exception{
+    String admin=token("admin@resenha.dev","admin123");
+    var created=http.exchange(base()+"/produtos",HttpMethod.POST,new HttpEntity<>(Map.of("codigo","Z-"+System.nanoTime(),"nome","Produto escala","unidadeMedida","UN","estoqueMinimo",0),auth(admin)),String.class);
+    long id=mapper.readTree(created.getBody()).path("id").asLong();
+    var ok=http.exchange(base()+"/movimentacoes",HttpMethod.POST,new HttpEntity<>(Map.of("produtoId",id,"tipo","ENTRADA","quantidade","2.0000","motivo","COMPRA"),auth(admin)),JsonNode.class);
+    assertThat(ok.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+    var bad=http.exchange(base()+"/movimentacoes",HttpMethod.POST,new HttpEntity<>(Map.of("produtoId",id,"tipo","ENTRADA","quantidade","1.0001","motivo","COMPRA"),auth(admin)),JsonNode.class);
+    assertThat(bad.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
   }
 }

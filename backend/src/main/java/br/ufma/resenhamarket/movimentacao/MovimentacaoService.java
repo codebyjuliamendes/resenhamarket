@@ -25,7 +25,8 @@ public class MovimentacaoService {
     Produto p=produtos.buscarParaMovimentacao(in.produtoId()).orElseThrow(()->new ApiException(HttpStatus.NOT_FOUND,"PRODUTO_NAO_ENCONTRADO","Produto não encontrado."));
     if(!p.isAtivo())throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,"PRODUTO_INATIVO","Este produto está inativo e não aceita movimentações.");
     BigDecimal qtd=in.quantidade().stripTrailingZeros();
-    if(in.quantidade().scale()>3)throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,"QUANTIDADE_INVALIDA","Use no máximo 3 casas decimais.");
+    // A escala é verificada depois de remover zeros à direita: "2.0000" é uma quantidade válida.
+    if(qtd.scale()>3)throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,"QUANTIDADE_INVALIDA","Use no máximo 3 casas decimais.");
     if(SetUnits.INTEIRAS.contains(p.getUnidadeMedida())&&qtd.scale()>0)throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,"QUANTIDADE_FRACIONARIA","Para esta unidade, informe uma quantidade inteira.");
     if(!in.motivo().aceita(in.tipo()))throw new ApiException(HttpStatus.UNPROCESSABLE_ENTITY,"MOTIVO_INCOMPATIVEL","Este motivo não combina com o tipo de movimentação.");
     BigDecimal saldo=in.tipo()==TipoMovimentacao.ENTRADA?p.getSaldoAtual().add(in.quantidade()):p.getSaldoAtual().subtract(in.quantidade());
