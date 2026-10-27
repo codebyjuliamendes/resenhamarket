@@ -23,6 +23,8 @@ services:
       APP_JWT_SECRET: ${APP_JWT_SECRET:-dev-only-resenha-market-secret-change-me-0123456789}
       APP_CORS_ORIGINS: ${APP_CORS_ORIGINS:-http://localhost:5173,http://localhost:3120}
       APP_SEED_ENABLED: ${APP_SEED_ENABLED:-true}
+      APP_SEED_CENARIO: ${APP_SEED_CENARIO:-todos}
+      APP_SEED_RESET: ${APP_SEED_RESET:-false}
       SERVER_PORT: 8080
     depends_on:
       db:

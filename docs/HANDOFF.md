@@ -35,9 +35,13 @@
 - Modal de movimentação com atalhos +1/+5/+10 e botão que mostra a quantidade; login em duas colunas.
 - Proposta de referência no canvas de design publicado nesta sessão.
 
+## Cenários de demonstração (27/10/2026)
+
+- `APP_SEED_CENARIO` escolhe varejo, farmacia, alimenticio ou todos; `APP_SEED_RESET=true` apaga produtos e movimentações e recarrega. Ver `docs/CENARIOS.md`.
+
 ## Próximos incrementos
 
-- Seleção/reset explícito dos seeds, refinamento de Docker health/recovery e tratamento de erros de banco.
+- Refinamento de Docker health/recovery e tratamento de erros de banco.
 - JaCoCo, métricas de cobertura, validação OS1 com roteiro observado e correção dos achados.
 - Paginação também na listagem de produtos, se o catálogo crescer além de algumas centenas de itens.
 
