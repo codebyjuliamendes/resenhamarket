@@ -20,3 +20,10 @@ describe('estoque e quantidade',()=>{
   expect(quantityError('KG',-2)).toMatch(/maior que zero/i);
  });
 });
+
+describe('precisão do saldo',()=>{
+ it('evita erros de ponto flutuante em frações',()=>{
+  expect(calculateNextBalance(0.1,0.2,'ENTRADA')).toBe(0.3);
+  expect(calculateNextBalance(1.3,1.1,'SAIDA')).toBe(0.2);
+ });
+});

@@ -18,19 +18,23 @@
 - Build da API Java 21 concluído pela imagem Docker.
 - Teste Spring/Testcontainers compilado. Execução do teste Testcontainers ainda precisa ser observada em um runner com acesso ao Docker socket (CI GitHub Actions).
 
+## Incremento de 27/10/2026 (S3/S4 — usuários, perfis e usabilidade)
+
+- API: `GET/POST/PUT /api/v1/usuarios`, `PATCH /usuarios/{id}/inativar|reativar` (regra de último administrador, sem autoinativação nem autorrebaixamento) e `PUT /auth/senha`.
+- API: `GET /movimentacoes` agora devolve `{content,page,size,totalElements,totalPages}` e aceita `produtoId`, `tipo`, `de`, `ate`.
+- API: 401/403 em JSON pelo Spring Security (antes, token expirado devolvia 403 e o cliente não encerrava a sessão); limite de 5 falhas de login por e-mail+IP em 15 minutos (429); erros de corpo/parâmetro inválido viram 400 em vez de 500.
+- Web: rotas reais com React Router (sem recarregar a página), página do produto com histórico e inativar/reativar, histórico com filtros de produto/período e paginação, tela de usuários, troca de senha, modal com Esc/foco preso/retorno de foco, busca com debounce e atalho `/`, fontes maiores e tabelas em cartões no celular.
+- Testes: 20 saídas simultâneas sobre saldo 10 (exatamente 10 aceitas), matriz de autorização, gestão de usuários, inativação de produto, limitador de login; no web, testes de interação do modal de movimentação, do login e do modal genérico.
+- Verificado localmente com PostgreSQL 16: `mvn verify` (testes de integração executados contra banco real), `npm run lint`, `npm run test` (10 testes), `npm run build` e roteiro ponta a ponta no navegador (Playwright) em desktop e 390 px.
+
 ## Próximos incrementos
 
-- Gestão de usuários ADMIN (listar/criar/editar/inativar, regra de último administrador) na API e interface.
-- Interface para inativar/reativar produtos e detalhe/aba de histórico por produto.
-- Paginação completa e filtros de período/produto no histórico.
-- Teste concorrente com 20 saídas simultâneas e cobertura da matriz de autorização.
 - Seleção/reset explícito dos seeds, refinamento de Docker health/recovery e tratamento de erros de banco.
 - JaCoCo, métricas de cobertura, validação OS1 com roteiro observado e correção dos achados.
-- Acessibilidade do modal (foco inicial/retorno, fechar com Escape) e testes de interação com Testing Library.
+- Paginação também na listagem de produtos, se o catálogo crescer além de algumas centenas de itens.
 
 ## Limites e segurança
 
-- `GET /api/v1/produtos` e `GET /api/v1/movimentacoes` ainda usam listas limitadas; evoluir contrato para `{content,page,size,totalElements,totalPages}`.
-- Adicionar rate limiting de login antes de qualquer ambiente acessível publicamente.
+- `GET /api/v1/produtos` ainda devolve lista simples.
+- O limite de tentativas de login fica em memória: vale por instância e zera ao reiniciar a API.
 - Segredo JWT e credenciais Compose são defaults de desenvolvimento. Para implantação, fornecer valores fortes por segredo de ambiente e desligar seeds.
-- Gestão visual de usuários e reativação/inativação no frontend ainda não estão implementadas.
