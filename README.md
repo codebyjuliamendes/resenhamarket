@@ -49,4 +49,4 @@ Os testes de integração do backend usam Testcontainers e PostgreSQL 16. Java 2
 
 ## Escopo e limites
 
-Este MVP cobre os requisitos R01 a R07 do TAP. A implantação em nuvem ainda está pendente. Não implementa os itens explicitamente fora de escopo da especificação (fiscal, relatórios gerenciais/dashboards, financeiro, múltiplas filiais, fornecedores, validade/lotes ou integrações externas). Veja [`docs/HANDOFF.md`](docs/HANDOFF.md) e [`docs/DECISOES.md`](docs/DECISOES.md).
+Este MVP cobre os requisitos R01 a R07 do TAP. A implantação em nuvem do sistema completo (Spring Boot e PostgreSQL) ainda está pendente. O link publicado na Vercel usa uma API simulada em memória (`api/server.ts`) só para demonstrar a interface: os dados não persistem e voltam ao estado inicial quando a função reinicia. Não implementa os itens explicitamente fora de escopo da especificação (fiscal, relatórios gerenciais/dashboards, financeiro, múltiplas filiais, fornecedores, validade/lotes ou integrações externas). Veja [`docs/HANDOFF.md`](docs/HANDOFF.md) e [`docs/DECISOES.md`](docs/DECISOES.md).

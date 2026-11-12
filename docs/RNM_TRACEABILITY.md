@@ -15,6 +15,8 @@ A especificação fornecida pelo usuário é tratada como requisito de produto. 
 | RN09 — igualdade no limite mínimo | Implementado | `saldoAtual <= estoqueMinimo`, com mínimo maior que zero |
 | RN10 — administração de usuários | Implementado | Tela e API de usuários; regra de último administrador; troca da própria senha |
 | RN11 — experiência responsiva e acessível | Implementado | Tabelas em cartões no celular, modal com Esc/foco preso, link de pular conteúdo, testes de interação |
-| RN12 — segurança e qualidade | Implementado | JWT, BCrypt, 401/403 consistentes, limite de tentativas de login, teste com 20 saídas concorrentes |
+| RN12 — segurança e qualidade | Implementado | JWT, BCrypt, 401/403 consistentes, limite de tentativas de login, teste com 20 saídas concorrentes, bateria de 30 movimentações em `SaldoConfiabilidadeTest` |
 
 Integrações, múltiplas filiais, fiscal, financeiro, fornecedores e atributos específicos de setores permanecem fora do escopo conforme a especificação.
+
+O estado dos objetivos de sucesso do TAP (OS1 a OS4) e as evidências pendentes estão em [`APRESENTACAO.md`](APRESENTACAO.md).

@@ -13,7 +13,7 @@
 
 - `npm run lint`, `npm run test` (4 testes) e `npm run build`: aprovados.
 - `npm audit --omit=dev`: 0 vulnerabilidades.
-- Docker Compose: API e PostgreSQL saudáveis; migração inicial aplicada; frontend servido em `http://localhost:3120`.
+- Docker Compose: API e PostgreSQL saudáveis; migração inicial aplicada; frontend servido em `http://localhost:3120` (porta usada nesta verificação; o padrão do Compose é `http://localhost:5173`, via `WEB_PORT`).
 - Smoke test da API: login administrador, consulta de 9 produtos, gravação de movimentação e conciliação com saldos iguais.
 - Build da API Java 21 concluído pela imagem Docker.
 - Teste Spring/Testcontainers compilado. Execução do teste Testcontainers ainda precisa ser observada em um runner com acesso ao Docker socket (CI GitHub Actions).
@@ -25,7 +25,7 @@
 - API: 401/403 em JSON pelo Spring Security (antes, token expirado devolvia 403 e o cliente não encerrava a sessão); limite de 5 falhas de login por e-mail+IP em 15 minutos (429); erros de corpo/parâmetro inválido viram 400 em vez de 500.
 - Web: rotas reais com React Router (sem recarregar a página), página do produto com histórico e inativar/reativar, histórico com filtros de produto/período e paginação, tela de usuários, troca de senha, modal com Esc/foco preso/retorno de foco, busca com debounce e atalho `/`, fontes maiores e tabelas em cartões no celular.
 - Testes: 20 saídas simultâneas sobre saldo 10 (exatamente 10 aceitas), matriz de autorização, gestão de usuários, inativação de produto, limitador de login; no web, testes de interação do modal de movimentação, do login e do modal genérico.
-- Verificado localmente com PostgreSQL 16: `mvn verify` (testes de integração executados contra banco real), `npm run lint`, `npm run test` (10 testes), `npm run build` e roteiro ponta a ponta no navegador (Playwright) em desktop e 390 px.
+- Verificado localmente com PostgreSQL 16: `mvn verify` (testes de integração executados contra banco real), `npm run lint`, `npm run test` (10 testes na época; 13 em 12/11/2026), `npm run build` e roteiro ponta a ponta no navegador (Playwright) em desktop e 390 px.
 
 ## Redesign visual (27/10/2026)
 
@@ -38,6 +38,13 @@
 ## Cenários de demonstração (27/10/2026)
 
 - `APP_SEED_CENARIO` escolhe varejo, farmacia, alimenticio ou todos; `APP_SEED_RESET=true` apaga produtos e movimentações e recarrega. Ver `docs/CENARIOS.md`.
+
+## Revisão pré-apresentação (12/11/2026)
+
+- Frontend: `npm run lint`, `npm run test` (**13 testes**, 3 arquivos) e `npm run build` aprovados.
+- Backend não executado nesta revisão (ambiente sem Maven/Docker); o resultado de `mvn verify` acima é o registrado em 27/10/2026.
+- `SaldoConfiabilidadeTest` executa **30 movimentações** alternadas (entrada 1,250 / saída 0,500) e confere saldo após cada uma, conciliação com o livro-razão (saldo final 11,250) e rejeição de saída acima do saldo (422). É a evidência da bateria de 30 movimentações (OS2).
+- A demonstração na Vercel (`api/server.ts`) é uma API simulada em memória para mostrar a interface; não é o Spring Boot com PostgreSQL. Ver `docs/APRESENTACAO.md`.
 
 ## Próximos incrementos
 
