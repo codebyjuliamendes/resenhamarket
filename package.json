@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "cd frontend && npm install && npm run build"
+    "build": "cd frontend && npm install && npm run build",
+    "demo": "npm --prefix frontend install && npm --prefix frontend run demo"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

@@ -22,6 +22,16 @@ Contas da demonstração:
 
 Não use essas credenciais em ambientes compartilhados ou de produção. Para esconder o atalho de demonstração da tela de login, gere o frontend com `VITE_SHOW_DEMO=false`. Para zerar os dados locais: `docker compose down -v` (isso apaga o volume local do banco).
 
+## Demonstração rápida, sem Docker
+
+Para abrir só a interface com dados de demonstração (sem Java, Docker nem banco), basta ter Node.js:
+
+```bash
+npm run demo
+```
+
+O navegador abre em `http://localhost:5173` com a mesma API simulada da versão na Vercel (`api/server.ts`): 24 produtos dos três ramos, dados em memória que voltam ao estado inicial quando o comando é reiniciado. Na tela de login, toque em **Administrador** ou **Operador** para preencher a conta. Para carregar um ramo só: `APP_SEED_CENARIO=farmacia npm run demo` (ou `varejo`, `alimenticio`).
+
 ## Testes e desenvolvimento
 
 ```bash
