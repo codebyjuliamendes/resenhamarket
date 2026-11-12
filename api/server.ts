@@ -203,6 +203,13 @@ function responderJson(res: ServerResponse, status: number, data: any) {
   res.end(JSON.stringify(data));
 }
 
+// O token da demonstração tem o formato demo-jwt-token-<id>-<timestamp>.
+function usuarioDoToken(req: IncomingMessage): Usuario {
+  const match = (req.headers.authorization || '').match(/demo-jwt-token-(\d+)-/);
+  const id = match ? Number(match[1]) : 1;
+  return usuarios.find((u) => u.id === id) || usuarios[0];
+}
+
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
   // Configuração de CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -254,9 +261,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
   // 2. Auth: Me
   if (path === '/auth/me' && req.method === 'GET') {
-    const authHeader = req.headers.authorization || '';
-    const id = authHeader.includes('token-2-') ? 2 : 1;
-    const usuario = usuarios.find((u) => u.id === id) || usuarios[0];
+    const usuario = usuarioDoToken(req);
     return responderJson(res, 200, {
       id: usuario.id,
       nome: usuario.nome,
@@ -401,6 +406,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       });
     }
 
+    const autor = usuarioDoToken(req);
     const novoSaldo = dados.tipo === 'ENTRADA' ? prod.saldoAtual + qtd : prod.saldoAtual - qtd;
     prod.saldoAtual = Number(novoSaldo.toFixed(2));
     prod.abaixoDoMinimo = prod.saldoAtual <= prod.estoqueMinimo;
@@ -416,8 +422,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
       saldoApos: prod.saldoAtual,
       motivo: dados.motivo,
       observacao: dados.observacao || null,
-      usuarioId: 1,
-      usuarioNome: 'Administrador da Loja',
+      usuarioId: autor.id,
+      usuarioNome: autor.nome,
       criadoEm: new Date().toISOString(),
     };
 
