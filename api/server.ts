@@ -128,8 +128,15 @@ function inicializarDados() {
   produtos = [];
   movimentos = [];
 
+  // Mesmo comportamento de APP_SEED_CENARIO no backend: varejo, farmacia, alimenticio ou todos.
+  const prefixos: Record<string, string> = { varejo: 'V-', farmacia: 'F-', alimenticio: 'A-' };
+  const cenario = (process.env.APP_SEED_CENARIO || 'todos')
+    .trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  const prefixo = prefixos[cenario];
+  const itensDoCenario = prefixo ? itensIniciais.filter((i) => i.codigo.startsWith(prefixo)) : itensIniciais;
+
   let mId = 1;
-  for (const item of itensIniciais) {
+  for (const item of itensDoCenario) {
     let saldo = 0;
     for (const ent of item.entradas) {
       saldo += ent.qtd;
